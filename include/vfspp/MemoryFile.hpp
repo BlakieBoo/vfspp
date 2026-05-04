@@ -216,6 +216,12 @@ public:
         return WriteImpl(buffer);
     }
 
+    void* GetFileAsPtr() override
+    {
+        [[maybe_unused]] auto lock = ThreadingPolicy::Lock(m_Mutex);
+        return m_Object.get()->GetData().get();
+    }
+
 private:
     inline MemoryFileObject& Object() const
     {

@@ -150,6 +150,25 @@ public:
         return WriteImpl(buffer);
     }
 
+    virtual void* GetFileAsPtr() override
+    {
+        [[maybe_unused]] auto lock = ThreadingPolicy::Lock(m_Mutex);
+        if (!IsOpenedImpl())
+            return nullptr;
+
+        if (m_DataPtr)
+            return m_DataPtr;
+
+        int size = SeekImpl(0, Origin::End);
+
+        m_DataPtr = malloc(size);
+        std::span<uint8_t> span = std::span<uint8_t> { (uint8_t*)m_DataPtr, size };
+        SeekImpl(0, Origin::Begin);
+        ReadImpl(span);
+
+        return m_DataPtr;
+    }
+
 private:
     inline const FileInfo& GetFileInfoImpl() const
     {
@@ -216,6 +235,11 @@ private:
             std::fclose(m_File);
             m_File = nullptr;
             m_Mode = FileMode::Read;
+            if (m_DataPtr)
+            {
+                free(m_DataPtr);
+                m_DataPtr = nullptr;
+            }
         }
     }
 
@@ -311,6 +335,7 @@ private:
     std::FILE* m_File = nullptr;
     FileMode m_Mode = FileMode::Read;
     mutable std::mutex m_Mutex;
+    void* m_DataPtr = nullptr;
 };
     
 } // namespace vfspp

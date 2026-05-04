@@ -108,6 +108,11 @@ public:
     virtual uint64_t Write(const std::vector<uint8_t>& buffer) = 0;
 
     /*
+     * Load the entire file into memory then return its pointer. Close this file to free pointer.
+     */
+    virtual void* GetFileAsPtr() = 0;
+
+    /*
     * Helpers to check if mode has specific flag
     */
     static bool ModeHasFlag(FileMode mode, FileMode flag)
