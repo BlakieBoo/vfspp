@@ -206,6 +206,11 @@ private:
     inline void CloseImpl()
     {
         m_SeekPos = 0;
+        if (m_DataPtr)
+        {
+            free(m_DataPtr);
+            m_DataPtr = nullptr;
+        }
     }
     
     inline bool IsOpenedImpl() const
