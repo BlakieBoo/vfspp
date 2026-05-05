@@ -35,6 +35,9 @@ public:
     ~NativeFile()
     {
         Close();
+
+        if (m_DataPtr)
+            free(m_DataPtr);
     }
     
     /*
@@ -206,6 +209,11 @@ private:
             return true;
         }
         
+        if (m_DataPtr)
+        {
+            free(m_DataPtr);
+            m_DataPtr = nullptr;
+        }
         m_Mode = mode;
         
         bool rd = IFile::ModeHasFlag(mode, FileMode::Read);
@@ -235,11 +243,6 @@ private:
             std::fclose(m_File);
             m_File = nullptr;
             m_Mode = FileMode::Read;
-            if (m_DataPtr)
-            {
-                free(m_DataPtr);
-                m_DataPtr = nullptr;
-            }
         }
     }
 
