@@ -155,7 +155,7 @@ public:
         int size = SeekImpl(0, Origin::End);
 
         m_DataPtr = malloc(size);
-        std::span<uint8_t> span = std::span<uint8_t>{ (uint8_t*)m_DataPtr, size };
+        std::span<uint8_t> span = std::span<uint8_t>((uint8_t*)m_DataPtr, size);
         SeekImpl(0, Origin::Begin);
         ReadImpl(span);
 
